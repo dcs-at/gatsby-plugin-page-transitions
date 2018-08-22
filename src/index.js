@@ -51,7 +51,7 @@ class PageTransition extends React.Component {
   render() {
     const defaultStyle = this.props.defaultStyle || {
       transition: `opacity ${this.state.transitionTime}ms ease-in-out`,
-      opacity: 0,
+      opacity: typeof window === 'undefined' ? 1 : 0
     };
 
     const transitionStyles = this.props.transitionStyles || {
