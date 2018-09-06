@@ -14,7 +14,7 @@ class PageTransition extends React.Component {
     this.listenerHandler = this.listenerHandler.bind(this);
     this.state = {
       in: false,
-      transitionTime: 0,
+      transitionTime: 250,
     };
   }
 
@@ -23,10 +23,7 @@ class PageTransition extends React.Component {
     global.window.addEventListener(pageTransitionEvent, this.listenerHandler);
     global.window[pageTransitionExists] = true;
     global.window[componentTransitionTime] = this.props.transitionTime;
-    this.setState({
-      transitionTime:
-        this.props.transitionTime || global.window[pageTransitionTime],
-    });
+    window.initialPageLoadCompleted = true;
   }
 
   componentWillUnmount() {
@@ -48,10 +45,17 @@ class PageTransition extends React.Component {
     if (currentPath !== nextPath) this.setIn(false);
   }
 
+  isFirstPageLoad() {
+    if (typeof window === 'undefined' || !window.initialPageLoadCompleted) {
+      return true;
+    }
+    return false;
+  }
+
   render() {
     const defaultStyle = this.props.defaultStyle || {
       transition: `opacity ${this.state.transitionTime}ms ease-in-out`,
-      opacity: typeof window === 'undefined' ? 1 : 0
+      opacity: this.isFirstPageLoad() ? 1 : 0
     };
 
     const transitionStyles = this.props.transitionStyles || {
